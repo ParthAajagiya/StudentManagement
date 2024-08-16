@@ -2,6 +2,7 @@ package Com.StudentManagement.Project.Responses;
 
 import java.time.LocalDate;
 
+import Com.StudentManagement.Project.Entity.Branches;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -60,6 +61,5 @@ public class StudentDTO {
     private String semester;
 
     @NotNull(message = "Branch cannot be null")
-    @Size(min = 1, max = 100, message = "Branch must be between 1 and 100 characters")
-    private String branch;
+    private Branches branch;
 }

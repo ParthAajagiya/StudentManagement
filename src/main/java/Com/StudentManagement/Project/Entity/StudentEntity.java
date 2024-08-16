@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Data
@@ -58,5 +57,5 @@ public class StudentEntity {
     private String semester;
 
     @Column(nullable = false)
-    private String branch;
+    private Branches branch;
 }

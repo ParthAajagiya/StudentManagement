@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 public interface StudentDAO extends JpaRepository<StudentEntity, Long> {
 		List<StudentEntity> findByRollNo(Integer rollNo);
-//		List<StudentEntity> findByDob(LocalDate dob);
+		List<StudentEntity> findByDob(LocalDate dob);
 
 	    @Query("SELECT s FROM StudentEntity s WHERE EXTRACT(MONTH FROM s.dob) = ?1 AND EXTRACT(DAY FROM s.dob) = ?2")
 	    List<StudentEntity> findByDob(int month, int day);

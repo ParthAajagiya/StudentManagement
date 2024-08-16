@@ -24,126 +24,125 @@ import static org.mockito.Mockito.*;
 
 public class StudentServiceImplTest {
 
-    @InjectMocks
-    private StudentServiceImpl studentService;
+	@InjectMocks
+	private StudentServiceImpl studentService;
 
-    @Mock
-    private StudentDAO studentDAO;
+	@Mock
+	private StudentDAO studentDAO;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+	@BeforeEach
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-    @Test
-    public void testInserData_withValidData() {
-        StudentDTO dto = new StudentDTO();
-        dto.setRollNo(1);
-        dto.setName("John");
-        dto.setSurname("Doe");
+	@Test
+	public void testInserData_withValidData() {
+		StudentDTO dto = new StudentDTO();
+		dto.setRollNo(1);
+		dto.setName("John");
+		dto.setSurname("Doe");
 
-        StudentEntity entity = new StudentEntity();
-        BeanUtils.copyProperties(dto, entity);
-        when(studentDAO.save(any(StudentEntity.class))).thenReturn(entity);
+		StudentEntity entity = new StudentEntity();
+		BeanUtils.copyProperties(dto, entity);
+		when(studentDAO.save(any(StudentEntity.class))).thenReturn(entity);
 
-        StudentDTO result = studentService.inserData(dto);
+		StudentDTO result = studentService.inserData(dto);
 
-        assertNotNull(result);
-        assertEquals(dto.getRollNo(), result.getRollNo());
-        assertEquals(dto.getName(), result.getName());
-    }
+		assertNotNull(result);
+		assertEquals(dto.getRollNo(), result.getRollNo());
+		assertEquals(dto.getName(), result.getName());
+	}
 
-    @Test
-    public void testInserData_withNullDto() {
-        assertThrows(NullDtoException.class, () -> studentService.inserData(null));
-    }
+	@Test
+	public void testInserData_withNullDto() {
+		assertThrows(NullDtoException.class, () -> studentService.inserData(null));
+	}
 
-    @Test
-    public void testInserData_withNegativeRollNo() {
-        StudentDTO dto = new StudentDTO();
-        dto.setRollNo(-1);
+	@Test
+	public void testInserData_withNegativeRollNo() {
+		StudentDTO dto = new StudentDTO();
+		dto.setRollNo(-1);
 
-        assertThrows(NegativeRollNoException.class, () -> studentService.inserData(dto));
-    }
+		assertThrows(NegativeRollNoException.class, () -> studentService.inserData(dto));
+	}
 
-    @Test
-    public void testGetAll() {
-        StudentEntity entity = new StudentEntity();
-        entity.setRollNo(1);
-        entity.setName("John");
+	@Test
+	public void testGetAll() {
+		StudentEntity entity = new StudentEntity();
+		entity.setRollNo(1);
+		entity.setName("John");
 
-        List<StudentEntity> entities = Arrays.asList(entity);
-        when(studentDAO.findAll()).thenReturn(entities);
+		List<StudentEntity> entities = Arrays.asList(entity);
+		when(studentDAO.findAll()).thenReturn(entities);
 
-        List<StudentDTO> result = studentService.getAll();
+		List<StudentDTO> result = studentService.getAll();
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(entity.getName(), result.get(0).getName());
-    }
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(entity.getName(), result.get(0).getName());
+	}
 
-    @Test
-    public void testUpdateData_withValidData() {
-        long id = 1L;
-        StudentDTO dto = new StudentDTO();
-        dto.setName("Jane");
-        dto.setSurname("Doe");
+	@Test
+	public void testUpdateData_withValidData() {
+		long id = 1L;
+		StudentDTO dto = new StudentDTO();
+		dto.setName("Jane");
+		dto.setSurname("Doe");
 
-        StudentEntity entity = new StudentEntity();
-        entity.setId(id);
-        entity.setName("John");
-        entity.setSurname("Smith");
+		StudentEntity entity = new StudentEntity();
+		entity.setId(id);
+		entity.setName("John");
+		entity.setSurname("Smith");
 
-        when(studentDAO.findById(id)).thenReturn(Optional.of(entity));
-        when(studentDAO.save(any(StudentEntity.class))).thenReturn(entity);
+		when(studentDAO.findById(id)).thenReturn(Optional.of(entity));
+		when(studentDAO.save(any(StudentEntity.class))).thenReturn(entity);
 
-        StudentDTO result = studentService.updateData(id, dto);
+		boolean result = studentService.updateData(id, dto);
 
-        assertNotNull(result);
-        assertEquals(dto.getName(), result.getName());
-        assertEquals(dto.getSurname(), result.getSurname());
-    }
+		assertNotNull(result);
+		assertTrue(result);
+	}
 
-    @Test
-    public void testUpdateData_withNullDto() {
-        assertThrows(NullDtoException.class, () -> studentService.updateData(1L, null));
-    }
+	@Test
+	public void testUpdateData_withNullDto() {
+		assertThrows(NullDtoException.class, () -> studentService.updateData(1L, null));
+	}
 
-    @Test
-    public void testUpdateData_withNonExistentId() {
-        long id = 1L;
-        StudentDTO dto = new StudentDTO();
+	@Test
+	public void testUpdateData_withNonExistentId() {
+		long id = 1L;
+		StudentDTO dto = new StudentDTO();
 
-        when(studentDAO.findById(id)).thenReturn(Optional.empty());
+		when(studentDAO.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> studentService.updateData(id, dto));
-    }
+		assertThrows(RuntimeException.class, () -> studentService.updateData(id, dto));
+	}
 
-    @Test
-    public void testDeleteData_withValidRollNo() {
-        int rollNo = 1;
-        StudentEntity entity = new StudentEntity();
-        entity.setRollNo(rollNo);
+	@Test
+	public void testDeleteData_withValidRollNo() {
+		int rollNo = 1;
+		StudentEntity entity = new StudentEntity();
+		entity.setRollNo(rollNo);
 
-        when(studentDAO.findByRollNo(rollNo)).thenReturn(Arrays.asList(entity));
+		when(studentDAO.findByRollNo(rollNo)).thenReturn(Arrays.asList(entity));
 
-        String result = studentService.deleteData(rollNo);
+		boolean result = studentService.deleteData(rollNo);
 
-        assertEquals("Student with roll number 1 deleted successfully.", result);
-        verify(studentDAO, times(1)).delete(entity);
-    }
+		assertTrue(result);
+		verify(studentDAO, times(1)).delete(entity);
+	}
 
-    @Test
-    public void testDeleteData_withNegativeRollNo() {
-        assertThrows(NegativeRollNoException.class, () -> studentService.deleteData(-1));
-    }
+	@Test
+	public void testDeleteData_withNegativeRollNo() {
+		assertThrows(NegativeRollNoException.class, () -> studentService.deleteData(-1));
+	}
 
-    @Test
-    public void testDeleteData_withNonExistentRollNo() {
-        int rollNo = 1;
+	@Test
+	public void testDeleteData_withNonExistentRollNo() {
+		int rollNo = 1;
 
-        when(studentDAO.findByRollNo(rollNo)).thenReturn(Arrays.asList());
+		when(studentDAO.findByRollNo(rollNo)).thenReturn(Arrays.asList());
 
-        assertThrows(RuntimeException.class, () -> studentService.deleteData(rollNo));
-    }
+		assertThrows(RuntimeException.class, () -> studentService.deleteData(rollNo));
+	}
 }
